@@ -50,11 +50,16 @@ class LyricsScraper():
         df = pd.read_csv(self.lyrics_df_path)
 
         for i in tqdm(range(len(df))):
-            soup = self.get_source_page(df.loc[i, "link"])
-            artist = df.loc[i, "artist"]
+            try:
+                soup = self.get_source_page(df.loc[i, "link"])
+                artist = df.loc[i, "artist"]
 
-            if self.check_artist(artist, soup):
-                df.loc[i, "text"] = self.get_text(soup)
+                if self.check_artist(artist, soup):
+                    df.loc[i, "text"] = self.get_text(soup)
+                else:
+                    df.loc[i, "text"] = "Non valid Artist"
+            except:
+                df.loc[i, "text"] = "No Lyrics Found"
 
         pd.to_csv(self.output_df, index = False)
 
